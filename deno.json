@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "license": "agpl-3",
     "exports": "./main.ts",
+    "nodeModulesDir": "auto",
     "tasks": {
 	"dev": "deno run --watch main.ts"
     },

@@ -1,25 +1,26 @@
-
 import { test_driver } from "./test_driver.ts";
 //test_driver();
 
-const dataForge = require('data-forge')
-function add_to_frame(results:any,
+//const dataForge = require('data-forge')
+import * as dataForge from "npm:data-forge@1.10.2"
+export function add_to_frame(results:any,
 		      name:any,
 		      value:any) {
 
     console.log(name,value);
 }
-function find_calls(event:any,
+
+export function find_calls(event:any,
 		    filter:any) {
 }
 
-function create_find_function(visit_function:any,
+export function create_find_function(visit_function:any,
 			      filter_function:any
 			     ) {
     return [0,1]
 }
 
-interface Introspector {
+export interface Introspector {
     (): any;
     filter_current_value: any;
     enter_test_driver:any
@@ -28,7 +29,7 @@ interface Introspector {
     debug:any
 }
 
-function test_frame(){
+export function test_frame(){
     console.log("hello");
     let empty_frame =  new dataForge.DataFrame([]);
     function filter_function_name(function_name:string) {
@@ -62,4 +63,4 @@ function test_frame(){
 }// test frame
 
 
-test_frame();
+//test_frame();

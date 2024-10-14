@@ -1,4 +1,5 @@
-const N3 = require('n3');
+//const N3 = require('n3');
+import * as N3 from "npm:n3@1.22.3"
 import * as fs from 'node:fs';
 //const fs = require('node:fs');
 
