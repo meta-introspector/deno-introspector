@@ -1,0 +1,59 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix dcterms: <http://purl.org/dc/terms/>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix isp: <https://huggingface.co/spaces/introspector/introspector-react-app#>.
+    
+<isp:self>
+  a rdf:Statement ;
+  rdfs:label "A self-reflective Turtle RDF file"@en ;
+  dcterms:description "A Turtle RDF file that describes itself"@en ;
+  dcterms:creator "J. Mike DuPont"@en ;
+  dcterms:date "2024-10-02"^^xsd:date ;
+  dcterms:format "text/turtle"@en ;
+  dcterms:identifier <isp:self> ;
+  dcterms:language "en"@en ;
+  dcterms:rights "AGPL 3.0"@en ;
+  dcterms:subject <isp:self> ;
+  dcterms:title "Self-reflective Turtle RDF file"@en ;
+
+  rdf:type rdfs:Resource ;
+  rdf:type rdf:Statement ;
+  rdfs:seeAlso <https://www.w3.org/TR/turtle/> ;
+
+  rdfs:comment "This RDF file describes itself, including its metadata and structure."@en ;
+
+  rdfs:isDefinedBy <isp:self> ;
+  rdfs:isReferencedBy <isp:self>.
+
+# Additional Links
+<https://huggingface.co/introspector>
+  rdfs:label "Hugging Face"@en ;
+  rdfs:seeAlso <https://huggingface.co/introspector> ;
+  dcterms:identifier <https://huggingface.co/introspector>.
+
+<https://github.com/meta-introspector>
+  rdfs:label "Github Repositories"@en ;
+  rdfs:seeAlso <https://github.com/meta-introspector> ;
+  dcterms:identifier <https://github.com/meta-introspector>.
+
+<https://h4ck3rm1k3.wordpress.com>
+  rdfs:label "Blog posts"@en ;
+  rdfs:seeAlso <https://h4ck3rm1k3.wordpress.com> ;
+  dcterms:identifier <https://h4ck3rm1k3.wordpress.com>.
+
+<https://x.com/introsp3ctor>
+  rdfs:label "Tweets"@en ;
+  rdfs:seeAlso <https://x.com/introsp3ctor> ;
+  dcterms:identifier <https://x.com/introsp3ctor>.
+  
+
+<https://huggingface.co/datasets/introspector/o1js-peformance-results/resolve/main/5657.clinic-flame.html> a <isp:clinic_report>.
+<https://huggingface.co/datasets/introspector/o1js-peformance-results/resolve/main/8703.clinic-flame.html> a <isp:clinic_report>.
+<https://huggingface.co/datasets/introspector/o1js-peformance-results/resolve/main/13121.clinic-flame.html> a <isp:clinic_report>.
+<https://huggingface.co/datasets/introspector/o1js-peformance-results/resolve/main/13008.clinic-flame.html> a <isp:clinic_report>.
+<https://huggingface.co/datasets/introspector/o1js-peformance-results/resolve/main/5099.clinic-flame.html> a <isp:clinic_report>.
+<https://huggingface.co/datasets/introspector/o1js-peformance-results/resolve/main/8683.clinic-flame.html> a <isp:clinic_report>.
+<https://huggingface.co/datasets/introspector/o1js-peformance-results/resolve/main/5120.clinic-flame.html> a <isp:clinic_report>.
+<https://huggingface.co/datasets/introspector/o1js-peformance-results/resolve/main/499286.clinic-flame.html> a <isp:clinic_report>.
+<https://huggingface.co/datasets/introspector/o1js-peformance-results/resolve/main/5636.clinic-flame.html> a <isp:clinic_report>.
