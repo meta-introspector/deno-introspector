@@ -14,11 +14,6 @@ export function find_calls(event:any,
 		    filter:any) {
 }
 
-export function create_find_function(visit_function:any,
-			      filter_function:any
-			     ) {
-    return [0,1]
-}
 
 export interface Introspector {
     (): any;
@@ -41,8 +36,6 @@ export function test_frame(){
         function visit_function_name(function_name:string, function_value:any) {
             add_to_frame(empty_frame,function_name, function_value);
 	}
-	//    let find_functions = create_find_function(visit_function_name,filter_function_name)
-	//    find_calls(event,find_functions);
 	return empty_frame  
     };
 

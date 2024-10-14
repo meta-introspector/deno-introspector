@@ -1,3 +1,3 @@
-export function statement(x:any) {
+export function statement(x:any):any {
     return "fixme"
 }

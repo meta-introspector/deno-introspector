@@ -1,7 +1,8 @@
 import { Functions } from "./functions.ts"
 import { missing } from "./missing.ts"
 import { associate_cache, save_cache } from "./cache.ts"
-const fs = require('node:fs');
+//const fs = require('node:fs');
+import * as fs from 'node:fs';
 function process_chunk(line:string)
 {
     const chunk = line;

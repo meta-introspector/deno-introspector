@@ -2,7 +2,7 @@
 export function associate_cache(url: string,
 				hostname: string,
 				url_parts :string[],
-				fn_parts:string[]) {
+				fn_parts:string[]): any {
     const alen = url_parts.length-1;
     //const filename  = url_parts[url_parts.length-1];
     //console.log("cache url: " + url);

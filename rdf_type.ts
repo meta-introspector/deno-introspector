@@ -1,6 +1,6 @@
 type TypeObjectCallback = (subject:string,callback:any) => string;
 
-export function rdf_type(type_function: TypeObjectCallback, subj:string,callback:any) {
+export function rdf_type(type_function: TypeObjectCallback, subj:string,callback:any):any {
     //const obj =  obj;
     //console.log("rdf_type type_obj: " + type_obj);
 //    console.log("type_obj:" + typeof(type_obj) );

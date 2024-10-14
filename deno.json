@@ -1,8 +1,25 @@
 {
     "name": "@introspector/introspector",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "license": "agpl-3",
-    "exports": "./main.ts",
+    "exports": {
+	"./main":"./main.ts",
+	"./cache":"./cache.ts",
+        "./functions":"./functions.ts",
+	"./process_statements":"./process_statements.ts",
+	"./rdf":"./rdf.ts",
+	"./test_driver":"./test_driver.ts",
+	"./clinic_report":"./clinic_report.ts",
+	"./is":"./introspector.ts",
+	"./missing" : "./missing.ts",
+        "./process" : "./process.ts",
+        "./rdf_type":"./rdf_type.ts",
+	"./test_driver":"./test_driver.ts",
+	"./filter":"./filter.ts",
+        "./pf":"./process_files.ts",
+	"./rdf":"./rdf_callbacks.ts",
+	"./st":"./statement.ts",
+    },
     "nodeModulesDir": "auto",
     "tasks": {
 	"dev": "deno run --watch main.ts"

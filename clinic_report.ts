@@ -173,7 +173,7 @@ const clinic_functions: Functions = {
     'clinic-flame': isp_clinic_flame_report
 }
 
-export function isp_clinic_report(report_url:string,callback:any) {
+export function isp_clinic_report(report_url:string,callback:any):any {
     callback.debug("clinit report");
     const reportUrl = new URL(report_url);
     const parts = reportUrl.pathname.split("/");
