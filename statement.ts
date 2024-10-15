@@ -1,3 +1,7 @@
-export function statement(x:any):any {
+interface Any {
+	  name:string;
+};
+
+export function statement(x:Any):string {
     return "fixme"
 }
