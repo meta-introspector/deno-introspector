@@ -1,7 +1,3 @@
-interface Any {
-	  name:string;
-};
-
-export function statement(_x:Any):string {
-    return "fixme"
+import type { Introspector } from "./introspector.ts";
+export function statement(subj:string,callback:Introspector):void {
 }

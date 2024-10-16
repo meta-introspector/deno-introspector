@@ -6,4 +6,5 @@ export function missing(x: RdfObject):CallbackOutput {
 	    if (x._object.id) {
 		console.log("missing"+ x._object.id);
 	    }}}
+  return {name:"rdf"}
 }

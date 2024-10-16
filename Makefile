@@ -1,3 +1,6 @@
+pub:
+	deno publish
+
 lint:
 	deno lint
 test:

@@ -1,10 +1,10 @@
 import { test_driver } from "./test_driver.ts";
-import type { Introspector,CallbackOutput,CallbackInput } from "./introspector.ts";
+import type { Introspector,CallbackOutput,CallbackInput,iFrame } from "./introspector.ts";
 import * as dataForge from "npm:data-forge@1.10.2"
 
 export function add_to_frame(_results:string,
-  _name:string,
-  _value:string):void {
+  name:string,
+  value:string):void {
     console.log(name,value);
 }
 
@@ -18,8 +18,8 @@ export function test_frame():void{
   console.log("hello test frame");
   const empty_frame =  new dataForge.DataFrame([]);
   
-  function filter_function_name(function_name:string):boolean {
-    console.log("filter"+function_name);
+  function filter_function_name(frame:iFrame):boolean {
+    console.log("filter"+frame);
     return true;
   }
   

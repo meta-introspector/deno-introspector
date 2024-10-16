@@ -1,10 +1,17 @@
-import type { Functions } from "./functions.ts"
-import { missing } from "./missing.ts"
+//import type { Functions } from "./functions.ts"
+
+export type ClinicCallback = (x: string, data:Struct, y:Introspector) => string;
+export interface ClinicFunctions {
+  [key: string]: ClinicCallback;
+}
+
+//import { missing } from "./missing.ts"
 import { associate_cache, save_cache } from "./cache.ts"
-import type { Introspector,CallbackReturn,Callback } from "./introspector.ts";
+import type { Struct } from "./cache.ts"
+import type { Introspector,CallbackOutput, iFrame,Tree,StringToTreeCallback,MaybeTree } from "./introspector.ts";
 import * as fs from 'node:fs';
 
-function process_chunk(line:string,callback:Callback)
+function process_chunk(line:string,callback:Introspector):MaybeTree
 {
     const begins = "module.exports="
     if (line) {
@@ -35,25 +42,6 @@ function process_chunk(line:string,callback:Callback)
     return undefined;
 }
 
-export interface iFrame {
-    id: number;
-    name: string;
-    fileName: string;
-    functionName: string;
-    lineNumber: number;
-    columnNumber: number;
-    target: string;
-    type: string;
-    category: string;
-    isOptimized: boolean,
-    isUnoptimized: boolean;
-    isInlinable: boolean;
-    isInit: boolean;
-    isWasm: boolean;
-    value: number;
-    onStackTop: string;
-    children: iFrame[];
-};
 
 //Object.getOwnPropertyNames(obj).forEach(report);
 //appName
@@ -63,13 +51,13 @@ export interface iFrame {
 //unmerged
 
 
-function frame_test(f: iFrame,parent:string,callback:Callback){
+function frame_test(f: iFrame,parent:string,callback:Introspector){
     function report_child(_previousValue: iFrame,
 			  currentValue: iFrame,
 			  _currentIndex: number,
 			  _array: iFrame[],
 			  parent_name:string,
-			  callback:Callback): iFrame {
+			  callback:Introspector): iFrame {
 
 			    if(callback.debug) {
 			      callback.debug("report child");
@@ -124,7 +112,12 @@ function frame_test(f: iFrame,parent:string,callback:Callback){
   return res.value;
 }
 
-function createRunningSumFunctor(f:Callback,callback:Introspector) {
+
+export type StringToSumCallback = (value?:string) => number;
+
+function createRunningSumFunctor(
+  f:StringToTreeCallback,
+  callback:Introspector):StringToSumCallback {
   if(callback.debug) {
     callback.debug("runningsum");
   }
@@ -142,7 +135,9 @@ function createRunningSumFunctor(f:Callback,callback:Introspector) {
 		}
 	      }
 	      //obj.merged.children.forEach(report);
-	      obj.unmerged.children.forEach(report_child2);		
+	      if (obj.unmerged.children) {
+		obj.unmerged.children.forEach(report_child2);
+	      }
 	      //obj.merged.forEach(report);
 	      //obj.unmerged.forEach(report);	      
 	      //sum.push(obj);
@@ -156,13 +151,10 @@ function process_flame_report(filename:string, data:string, callback:Introspecto
   if(callback.debug) {
     callback.debug("flame");
   }
-  const sumfunc:Callback = createRunningSumFunctor(process_chunk,callback);
+  const sumfunc = createRunningSumFunctor(process_chunk,callback);
   if (data) {
     data.split("\n").forEach(sumfunc);
   }
-  const sum:number = sumfunc(callback);
-  console.log(filename + "sum : " + sum);
-  return sum;
 }
 
 function createProcessor(filename:string,callback:Introspector) {
@@ -171,21 +163,30 @@ function createProcessor(filename:string,callback:Introspector) {
     }
 }
 
-function isp_clinic_flame_report(report_url:string, data:CallbackInput, callback:Introspector) {
+function isp_clinic_flame_report(report_url:string, data:Struct, callback:Introspector):string {
   //console.log("file: " + data.newpath);
   if(callback.debug) {
     callback.debug("ispflame");
   }
   const functor = createProcessor(data.newpath,callback);
-  fs.readFile(data.newpath, "utf-8",functor);
+  //fs.readFile(, "utf-8",);
+  const decoder = new TextDecoder("utf-8");
+  const bytes = Deno.readFileSync(data.newpath);
+  functor("",decoder.decode(bytes));
+  
   return "flame report:" + report_url;
 }
 
-const clinic_functions: Functions = {
+const clinic_functions: ClinicFunctions = {
     'clinic-flame': isp_clinic_flame_report
 }
 
-export function isp_clinic_report(report_url:string,callback:Introspector):CallbackReturn {
+function isp_clinic_missing_report(report_url:string, data:Struct, callback:Introspector):string {
+  console.log("missing"+ data);
+  return "missing"
+}
+  
+export function isp_clinic_report(report_url:string,callback:Introspector):CallbackOutput {
 
   if(callback.debug) {
     callback.debug("clinic report");
@@ -200,14 +201,15 @@ export function isp_clinic_report(report_url:string,callback:Introspector):Callb
     const callback_function = clinic_functions[fntype]
     // now lets construct a cache
     const cached = associate_cache(report_url,hostname,parts,fnparts);
-    const data = "missing";
+  let data = "missing";
 
     if (callback_function) {
 	data = callback_function(report_url, cached, callback);
     } else {
 	console.log("missing: " + fntype);
-	clinic_functions[fntype] = missing;
+	clinic_functions[fntype] = isp_clinic_missing_report;
     }
 
-    return save_cache(report_url, hostname, parts, fnparts, cached,data);
+  save_cache(report_url, hostname, parts, fnparts, cached,{ newpath:data} as Struct);
+  return {name:"missing"};
 }

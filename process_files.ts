@@ -1,11 +1,13 @@
+// reads the tree -J json file, see files.json
 //import type { Functions } from "./functions.ts"
 //import type { missing } from "./missing.ts"
+import type { MaybeTree, iFrame } from "./introspector.ts"
 //import type {
 //associate_cache,
 //save_cache } from "./cache.ts"
 //const fs = require('node:fs');
 import * as fs from 'node:fs';
-function process_chunk(line:string)
+function process_chunk(line:string):MaybeTree
 {
     const chunk = line;
     const obj = JSON.parse(chunk)    
@@ -30,7 +32,7 @@ function process_chunk(line:string)
 //     return 0;
 // }
 
-function createRunningSumFunctor(_f:string) {
+function createRunningSumFunctor() {
   //let objects:object[] = [];
     let sum:string = "";
     
@@ -47,25 +49,27 @@ function createRunningSumFunctor(_f:string) {
   return [process,report];
 }
 
+export interface Frame2 {
+  contents: Frame2[]
+  name:string
+}
+
 function process_data(filename:string, data:string) {
-  const [sumfunc,report_func] = createRunningSumFunctor(process_chunk);
+  const [sumfunc,report_func] = createRunningSumFunctor();
     if (data) {
 	data.split("\n").forEach(sumfunc);
     }
   const sum:number = report_func()
-
-
-    function reducesum(value:number, parent_name1:string){
-
+    function reducesum(value:Frame2, parent_name1:string){
 	let name1 = parent_name1 + "/" + "unknown";
-	
+
 	// function report2(value:any,index:any){
 	//     console.log("report2",value,index);
 	// }
 
 	//console.log("reducesum",value);
 
-	function report3(_empty:number,value:number, parent_name:string){
+	function report3(empty:number,value:Frame2, parent_name:string){
 	    //console.log("report3val:",value);
 
 	    if (value){
@@ -74,11 +78,13 @@ function process_data(filename:string, data:string) {
 		    name  = parent_name + "/" + value.name
 		}
 		if (value.contents) {
-		    console.log("contents2:",value.contents.length, name);
-		  const wrapper=(empty:number,value:number)=>{
-		    report3(empty,value,name);
+		  //console.log("contents2:",value.contents.length, name);
+		  const wrapper4=(previousValue: iFrame, currentValue: iFrame, currentIndex: number, array: iFrame[]): iFrame => {
+		    //	  const wrapper1=(empty:number,value:Frame2)=>{
+		    //report3(empty,currentValue,name);
+		    return {} as iFrame
 		  };
-		  value.contents.reduce(wrapper);
+		  //value.contents.reduce(wrapper4);
 		}
 		else {
 		    console.log("file:",name);
@@ -98,23 +104,23 @@ function process_data(filename:string, data:string) {
 	    if (value.contents) {
 		//		console.log("contents len:",value.contents.length);
 		console.log("contents name, len:",name1, value.contents.length);
-	      const wrapper = (empty:number,value:number)=>{
-		report3(empty,value,name1);
+	      const wrapper2 = (empty:number,value:number)=>{
+		//report3(empty,value,name1);
 	      }
-	      value.contents.reduce(wrapper);
+	      //value.contents.reduce(wrapper2);
 	    }
 	}
     }
 
 
-    function wrapper(value:number){
-	reducesum(value, "");
+    function wrapper3(value:number){
+      //reducesum(value, "");
     }	
-    sum.reduce(wrapper);
-    function report(value:number,index:number){
-	console.log("report1",value,index);
-    }
-    Object.getOwnPropertyNames(sum).forEach(report);    
+  //sum.reduce(wrapper3);
+  //function report(value:number,index:number){
+  //console.log("report1",value,index);
+  // }
+  //    Object.getOwnPropertyNames(sum).forEach(report);    
     console.log("Check: " + filename + "sum : " + sum);
     return sum;
 }
@@ -128,7 +134,7 @@ function createProcessor(filename:string) {
 function tree_json_file_parser(filename:string) {
   console.log("file: " + filename);
   const functor = createProcessor(filename);
-  fs.readFile(filename, "utf-8",functor);
+  //fs.readFile(filename, "utf-8",functor);
   return "json_report:";
 }
 

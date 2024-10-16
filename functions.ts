@@ -1,5 +1,5 @@
 
-import type { _Introspector, Callback } from "./introspector.ts";
+import type { Callback } from "./introspector.ts";
 export interface Functions {
   [key: string]: Callback;
 }

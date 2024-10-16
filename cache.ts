@@ -16,7 +16,7 @@ export function associate_cache(_url: string,
     //console.log("cache: slice:" + newpath);
     return {
 	"newpath" : newpath
-    };    
+    } as Struct;    
 }
 
 export function save_cache(_url:string,
