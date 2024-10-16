@@ -1,35 +1,37 @@
-import { Functions } from "./functions.ts"
-import { missing } from "./missing.ts"
-import { associate_cache, save_cache } from "./cache.ts"
+//import type { Functions } from "./functions.ts"
+//import type { missing } from "./missing.ts"
+//import type {
+//associate_cache,
+//save_cache } from "./cache.ts"
 //const fs = require('node:fs');
 import * as fs from 'node:fs';
 function process_chunk(line:string)
 {
     const chunk = line;
-    let obj = JSON.parse(chunk)    
+    const obj = JSON.parse(chunk)    
     return obj;
 }
 
-export interface iFile {
+//export interface iFile {
     //children: iFrame[];
-};
+//};
 
-function file_test(f: iFile){
-    function report_child(previousValue: iFile, currentValue: iFile, currentIndex: number, array: iFile[]): iFile {
-	let sum = 0;
-	if (currentValue){
-	    sum = sum + file_test(currentValue); // add the children
-	}
-	let ret  = {value: sum} as iFile // return a new object with just the value
-	return ret;
-    }
-    //    let res = f.children.reduce(report_child,{} as iFile); //recurse
-    //let res = 0;
-    return 0;
-}
+// function file_test(f: iFile){
+//     function report_child(previousValue: iFile, currentValue: iFile, currentIndex: number, array: iFile[]): iFile {
+// 	let sum = 0;
+// 	if (currentValue){
+// 	    sum = sum + file_test(currentValue); // add the children
+// 	}
+// 	let ret  = {value: sum} as iFile // return a new object with just the value
+// 	return ret;
+//     }
+//     //    let res = f.children.reduce(report_child,{} as iFile); //recurse
+//     //let res = 0;
+//     return 0;
+// }
 
-function createRunningSumFunctor(f:any) {
-    let objects:object[] = [];
+function createRunningSumFunctor(_f:string) {
+  //let objects:object[] = [];
     let sum:string = "";
     
     function process(value?: string): number {
@@ -38,22 +40,22 @@ function createRunningSumFunctor(f:any) {
 	}
 	return 0;
     };
-    function report(): number {
-	let obj = JSON.parse(sum)
-	return obj;
-    };
-    return [process,report];
+  function report(): number {
+    const obj = JSON.parse(sum)
+    return obj;
+  };
+  return [process,report];
 }
 
 function process_data(filename:string, data:string) {
-    let [sumfunc,report_func] = createRunningSumFunctor(process_chunk);
+  const [sumfunc,report_func] = createRunningSumFunctor(process_chunk);
     if (data) {
 	data.split("\n").forEach(sumfunc);
     }
-    let sum:any = report_func()
+  const sum:number = report_func()
 
 
-    function reducesum(value:any, parent_name1:string){
+    function reducesum(value:number, parent_name1:string){
 
 	let name1 = parent_name1 + "/" + "unknown";
 	
@@ -63,7 +65,7 @@ function process_data(filename:string, data:string) {
 
 	//console.log("reducesum",value);
 
-	function report3(empty:any,value:any, parent_name:string){
+	function report3(_empty:number,value:number, parent_name:string){
 	    //console.log("report3val:",value);
 
 	    if (value){
@@ -73,10 +75,10 @@ function process_data(filename:string, data:string) {
 		}
 		if (value.contents) {
 		    console.log("contents2:",value.contents.length, name);
-		    function wrapper(empty:any,value:any){
-			report3(empty,value,name);
-		    }
-		    value.contents.reduce(wrapper);
+		  const wrapper=(empty:number,value:number)=>{
+		    report3(empty,value,name);
+		  };
+		  value.contents.reduce(wrapper);
 		}
 		else {
 		    console.log("file:",name);
@@ -96,20 +98,20 @@ function process_data(filename:string, data:string) {
 	    if (value.contents) {
 		//		console.log("contents len:",value.contents.length);
 		console.log("contents name, len:",name1, value.contents.length);
-		function wrapper(empty:any,value:any){
-		    report3(empty,value,name1);
-		}
-		value.contents.reduce(wrapper);
+	      const wrapper = (empty:number,value:number)=>{
+		report3(empty,value,name1);
+	      }
+	      value.contents.reduce(wrapper);
 	    }
 	}
     }
 
 
-    function wrapper(value:any){
+    function wrapper(value:number){
 	reducesum(value, "");
     }	
     sum.reduce(wrapper);
-    function report(value:any,index:any){
+    function report(value:number,index:number){
 	console.log("report1",value,index);
     }
     Object.getOwnPropertyNames(sum).forEach(report);    
@@ -118,16 +120,16 @@ function process_data(filename:string, data:string) {
 }
 
 function createProcessor(filename:string) {
-    return function(err:any, data:string) {	
+    return function(_err:number, data:string) {	
 	return process_data(filename, data);
     }
 }
 
 function tree_json_file_parser(filename:string) {
-    console.log("file: " + filename);
-    let functor = createProcessor(filename);
-    fs.readFile(filename, "utf-8",functor);
-    return "json_report:";
+  console.log("file: " + filename);
+  const functor = createProcessor(filename);
+  fs.readFile(filename, "utf-8",functor);
+  return "json_report:";
 }
 
 export function read_file() {

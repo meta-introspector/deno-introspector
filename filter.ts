@@ -1,59 +1,49 @@
 import { test_driver } from "./test_driver.ts";
-//test_driver();
-
-//const dataForge = require('data-forge')
+import type { Introspector,CallbackOutput,CallbackInput } from "./introspector.ts";
 import * as dataForge from "npm:data-forge@1.10.2"
-export function add_to_frame(results:any,
-		      name:any,
-		      value:any) {
 
+export function add_to_frame(_results:string,
+  _name:string,
+  _value:string):void {
     console.log(name,value);
 }
 
-export function find_calls(event:any,
-		    filter:any) {
+export function find_calls(_event:string,
+  _filter:string):void {
 }
 
+//(event: any) => DataFrame<number, never>
 
-export interface Introspector {
-    (): any;
-    filter_current_value: any;
-    enter_test_driver:any
-    leave_test_driver:any
-    wrapper_rdf:any
-    debug:any
-}
+export function test_frame():void{
+  console.log("hello test frame");
+  const empty_frame =  new dataForge.DataFrame([]);
+  
+  function filter_function_name(function_name:string):boolean {
+    console.log("filter"+function_name);
+    return true;
+  }
+  
+  //  let visitor2 = <Introspector>function (event:CallbackInput) {
+  //    return {name:"foo"} as CallbackOutput;
+  //}
+  
+  const visitor = <Introspector>function (_event: CallbackInput) : CallbackOutput{
+    console.log("visitor");
+    //function visit_function_name(function_name:string, function_value:any):void {
+    // add_to_frame(empty_frame,function_name, function_value);
+    //}
+    return function returnframe() { return empty_frame;  };
+  };
+  
+  visitor.filter_current_value= filter_function_name; // save part of the callback
+  
+  visitor.debug= function(x:string):CallbackOutput{
+    console.log("debug",x);
+    return {name:x};
+    }
 
-export function test_frame(){
-    console.log("hello");
-    let empty_frame =  new dataForge.DataFrame([]);
-    function filter_function_name(function_name:string) {
-	//console.log("filter");
-	return true;
-    }
-    var visitor = <Introspector>function (event:any) {
-	console.log("visitor");
-        function visit_function_name(function_name:string, function_value:any) {
-            add_to_frame(empty_frame,function_name, function_value);
-	}
-	return empty_frame  
-    };
+  test_driver(visitor);
 
-    visitor.filter_current_value= filter_function_name; // save part of the callback
-    visitor.enter_test_driver= function(){
-	//console.log("enter the test driver");
-    }
-    visitor.debug= function(x:any){
-	//console.log("debug",x);
-    }
-    visitor.wrapper_rdf= function(){
-	//console.log("rdf");
-    }
-    visitor.leave_test_driver= function(){
-	//console.log("leave the test driver");
-    }
-    test_driver(visitor);
+  console.log("frame count",empty_frame.count());
 }// test frame
 
-
-//test_frame();

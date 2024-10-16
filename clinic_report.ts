@@ -1,11 +1,10 @@
-import { Functions } from "./functions.ts"
+import type { Functions } from "./functions.ts"
 import { missing } from "./missing.ts"
 import { associate_cache, save_cache } from "./cache.ts"
-
-//const fs = require('node:fs');
+import type { Introspector,CallbackReturn,Callback } from "./introspector.ts";
 import * as fs from 'node:fs';
 
-function process_chunk(line:string,callback:any)
+function process_chunk(line:string,callback:Callback)
 {
     const begins = "module.exports="
     if (line) {
@@ -14,13 +13,15 @@ function process_chunk(line:string,callback:any)
 		const bl = begins.length;
 		//console.log("chunk: " + line.substring(bl,20));
 		const chunk = line.substring(bl,line.length);
-		let obj = JSON.parse(chunk)
+		const obj = JSON.parse(chunk)
 		//let runnable = eval(line);
 		//runnable.Run("module.exports").then((result:string)=>{console.log(result);});
 		// console.log(JSON.stringify(obj,null,2));
 		//	callback.process_raw_module_export(obj);
+	      if(callback.debug) {
 		callback.debug("got chunk");
-		return obj;
+	      }
+	      return obj;
 	    }	    
 	}
 	else {
@@ -50,7 +51,7 @@ export interface iFrame {
     isInit: boolean;
     isWasm: boolean;
     value: number;
-    onStackTop: any;
+    onStackTop: string;
     children: iFrame[];
 };
 
@@ -62,15 +63,17 @@ export interface iFrame {
 //unmerged
 
 
-function frame_test(f: iFrame,parent:string,callback:any){
-    function report_child(previousValue: iFrame,
+function frame_test(f: iFrame,parent:string,callback:Callback){
+    function report_child(_previousValue: iFrame,
 			  currentValue: iFrame,
-			  currentIndex: number,
-			  array: iFrame[],
+			  _currentIndex: number,
+			  _array: iFrame[],
 			  parent_name:string,
-			  callback:any): iFrame {
+			  callback:Callback): iFrame {
 
-	callback.debug("report child");
+			    if(callback.debug) {
+			      callback.debug("report child");
+			    }
 	if(!callback.filter_current_value(currentValue))
 	    //	if (! currentValue.name.includes("o1js"))
 	{
@@ -95,11 +98,13 @@ function frame_test(f: iFrame,parent:string,callback:any){
 	
 	let sum = 0;
 	if (currentValue){
-	    sum = sum + currentValue.value; // add the current value
-//	    callback.debug("check")
+	  sum = sum + currentValue.value; // add the current value
+	  //if(callback.debug) {
+	    //	    callback.debug("check")
+	    //}
 	    sum = sum + frame_test(currentValue,name,callback); // add the children
 	}
-	let ret  = {value: sum} as iFrame // return a new object with just the value
+	const ret  = {value: sum} as iFrame // return a new object with just the value
 	return ret;
     }
     
@@ -111,70 +116,80 @@ function frame_test(f: iFrame,parent:string,callback:any){
 			    parent,
 			    callback);
     }
+  if(callback.debug) {
     callback.debug("reduce");
-    let res = f.children.reduce(wrapper,{value:f.value} as iFrame); //recurse
-    //console.log(JSON.stringify(res.value));
-    return res.value;
+  }
+  const res = f.children.reduce(wrapper,{value:f.value} as iFrame); //recurse
+  //console.log(JSON.stringify(res.value));
+  return res.value;
 }
 
-function createRunningSumFunctor(f:any,callback:any) {
+function createRunningSumFunctor(f:Callback,callback:Introspector) {
+  if(callback.debug) {
     callback.debug("runningsum");
-    let objects:object[] = [];
+  }
+  //let objects:object[] = [];
     let sum:number = 0;
     return function(value?: string): number {
 	if (value !== undefined) {
 	    
 	    const obj = f(value,callback);// apply f
 	    if (obj !== undefined) {
-		function report_child2(value:object,index:number){
-		    if (value){
-			let res = frame_test(value as iFrame, "root", callback);
-			sum = sum + res
-		    }
+	      const report_child2=(value:object,_index:number)=>{
+		if (value){
+		  const res = frame_test(value as iFrame, "root", callback);
+		  sum = sum + res
 		}
-		//obj.merged.children.forEach(report);
-		obj.unmerged.children.forEach(report_child2);		
-		//obj.merged.forEach(report);
-		//obj.unmerged.forEach(report);
-		
-		//sum.push(obj);
+	      }
+	      //obj.merged.children.forEach(report);
+	      obj.unmerged.children.forEach(report_child2);		
+	      //obj.merged.forEach(report);
+	      //obj.unmerged.forEach(report);	      
+	      //sum.push(obj);
 	    }
 	}
 	return sum;
     };
 }
 
-function process_flame_report(filename:string, data:string, callback:any) {
+function process_flame_report(filename:string, data:string, callback:Introspector) {
+  if(callback.debug) {
     callback.debug("flame");
-    let sumfunc:any = createRunningSumFunctor(process_chunk,callback);
-    if (data) {
-	data.split("\n").forEach(sumfunc);
-    }
-    let sum:number = sumfunc(callback);
-    console.log(filename + "sum : " + sum);
-    return sum;
+  }
+  const sumfunc:Callback = createRunningSumFunctor(process_chunk,callback);
+  if (data) {
+    data.split("\n").forEach(sumfunc);
+  }
+  const sum:number = sumfunc(callback);
+  console.log(filename + "sum : " + sum);
+  return sum;
 }
 
-function createProcessor(filename:string,callback:any) {
-    return function(err:any, data:string) {	
+function createProcessor(filename:string,callback:Introspector) {
+    return function(_err:string, data:string) {	
 	return process_flame_report(filename, data, callback);
     }
 }
 
-function isp_clinic_flame_report(report_url:string, data:any, callback:any) {
-    //console.log("file: " + data.newpath);
+function isp_clinic_flame_report(report_url:string, data:CallbackInput, callback:Introspector) {
+  //console.log("file: " + data.newpath);
+  if(callback.debug) {
     callback.debug("ispflame");
-    let functor = createProcessor(data.newpath,callback);
-    fs.readFile(data.newpath, "utf-8",functor);
-    return "flame report:" + report_url;
+  }
+  const functor = createProcessor(data.newpath,callback);
+  fs.readFile(data.newpath, "utf-8",functor);
+  return "flame report:" + report_url;
 }
 
 const clinic_functions: Functions = {
     'clinic-flame': isp_clinic_flame_report
 }
 
-export function isp_clinic_report(report_url:string,callback:any):any {
-    callback.debug("clinit report");
+export function isp_clinic_report(report_url:string,callback:Introspector):CallbackReturn {
+
+  if(callback.debug) {
+    callback.debug("clinic report");
+  }
     const reportUrl = new URL(report_url);
     const parts = reportUrl.pathname.split("/");
     const hostname = reportUrl.hostname;
@@ -185,7 +200,7 @@ export function isp_clinic_report(report_url:string,callback:any):any {
     const callback_function = clinic_functions[fntype]
     // now lets construct a cache
     const cached = associate_cache(report_url,hostname,parts,fnparts);
-    var data = "missing";
+    const data = "missing";
 
     if (callback_function) {
 	data = callback_function(report_url, cached, callback);

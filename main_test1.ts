@@ -2,8 +2,9 @@
 //import { add } from "./main.ts";
 import type { _Introspector,
   CallbackOutput,CallbackInput } from "./introspector.ts";
+
 import { test_driver } from "./test_driver.ts";
-import { test_frame } from "./filter.ts";
+//import { test_frame } from "./filter.ts";
 
 function foo(a:CallbackInput):CallbackOutput
 {
@@ -11,19 +12,19 @@ function foo(a:CallbackInput):CallbackOutput
   return a;
 }
 
-
-
-Deno.test(function driverTest() {
-  console.log("debug1");
+function main():void {
   const callback =foo;
-  test_driver(callback);
-  console.log("debugb");
-});
-Deno.test(function frameTest() {
-  console.log("debug2");
-  test_frame();
-  console.log("debug3");
-});
+  console.log("debug1");
+  const a = test_driver(callback);
+  console.log("debugb",a);
+}
+
+main();
+  
+//console.log("debug2");
+//test_frame();
+//console.log("debug3");
+
 
 
 
