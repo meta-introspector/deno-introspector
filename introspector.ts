@@ -44,15 +44,15 @@ export interface TreeNode {
 export interface Tree {
   merged: TreeNode;
   unmerged: TreeNode;
-  codeAreas: any;
+  //codeAreas: any;
   appName: string;
   pathSeparator: string;
 }
 
-class DataTree {
+export class DataTree {
   merged!: TreeNode;
   unmerged!: TreeNode;
-  codeAreas: any;
+  //  codeAreas: any;
   appName!: string;
   pathSeparator!: string;
   mergedNodes!: TreeNode[];
@@ -70,20 +70,60 @@ class DataTree {
 }
 
 
+export interface Accumulated {
+  //(value: T): T;
+  //result: () => T;
+  renderHtml: () => string;
+  renderJson: () => string;
+  renderConsole: () => void;
+}
+
+// Define the interface for the accumulator
+export interface Accumulator {
+  (value: Accumulated): Accumulated;
+  results: () => Accumulated[];
+  renderHtml: () => string;
+  renderJson: () => string;
+  renderConsole: () => void;
+}
+
+// // Create a singleton instance of the accumulator
+// const accumulator = createAccumulator();
+
+// // Use the accumulator
+// accumulator(10);
+// accumulator(20);
+// accumulator(30);
+
+// // Retrieve the results via the properties
+// console.log('Results:', accumulator.results());
+
+// // Render the results in different formats
+// console.log('HTML:');
+// console.log(accumulator.renderHtml());
+
+// console.log('JSON:');
+// console.log(accumulator.renderJson());
+
+// console.log('Console:');
+// accumulator.renderConsole();
 
 export type StringCallback = (x: string) => CallbackOutput;
 export type FilterFunctionCallback = (function_name: iFrame) => boolean
 //export type Example1 = (event: any) => DataFrame<number, never>;
+
+
 export interface Introspector {
     (): Callback;// the default function
     filter_current_value: FilterFunctionCallback;
 //    enter_test_driver:Callback
 //    leave_test_driver:Callback
 //    wrapper_rdf:Callback
-    debug:StringCallback
+  debug:StringCallback
+  accumulator:Accumulator
 }
 
-export function isp_self(subj:string,callback:Introspector) :void {
+export function isp_self(subj:string,_callback:Introspector) :void {
   console.log("self"+ subj);
   //return {name:"nope"}
 }

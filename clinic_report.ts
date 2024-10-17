@@ -8,8 +8,10 @@ export interface ClinicFunctions {
 //import { missing } from "./missing.ts"
 import { associate_cache, save_cache } from "./cache.ts"
 import type { Struct } from "./cache.ts"
-import type { Introspector,CallbackOutput, iFrame,Tree,StringToTreeCallback,MaybeTree } from "./introspector.ts";
-import * as fs from 'node:fs';
+import type { Introspector,CallbackOutput, iFrame,
+  //Tree,
+  StringToTreeCallback,MaybeTree } from "./introspector.ts";
+//import * as fs from 'node:fs';
 
 function process_chunk(line:string,callback:Introspector):MaybeTree
 {
@@ -58,16 +60,18 @@ function frame_test(f: iFrame,parent:string,callback:Introspector){
 			  _array: iFrame[],
 			  parent_name:string,
 			  callback:Introspector): iFrame {
-
+			    //console.log("reportchild",callback);
 			    if(callback.debug) {
 			      callback.debug("report child");
 			    }
-	if(!callback.filter_current_value(currentValue))
-	    //	if (! currentValue.name.includes("o1js"))
-	{
-	    return {value: 0} as iFrame // return a new object with just the value
-	}
-	const name = parent_name + "|" +currentValue.name;
+			    if (callback.filter_current_value){
+			      if(!callback.filter_current_value(currentValue))
+				//	if (! currentValue.name.includes("o1js"))
+				{
+				  return {value: 0} as iFrame // return a new object with just the value
+				}
+			    }
+			    const name = parent_name + "|" +currentValue.name;
 	//console.log(	    "previousValue",	    JSON.stringify(previousValue).length);
 	//console.log("previousValue.name",previousValue.name);
 //	console.log("currentValue",JSON.stringify(currentValue).length);
@@ -147,7 +151,7 @@ function createRunningSumFunctor(
     };
 }
 
-function process_flame_report(filename:string, data:string, callback:Introspector) {
+function process_flame_report(_filename:string, data:string, callback:Introspector) {
   if(callback.debug) {
     callback.debug("flame");
   }
@@ -163,7 +167,9 @@ function createProcessor(filename:string,callback:Introspector) {
     }
 }
 
-function isp_clinic_flame_report(report_url:string, data:Struct, callback:Introspector):string {
+function isp_clinic_flame_report(report_url:string,
+  data:Struct,
+  callback:Introspector):string {
   //console.log("file: " + data.newpath);
   if(callback.debug) {
     callback.debug("ispflame");
@@ -181,7 +187,7 @@ const clinic_functions: ClinicFunctions = {
     'clinic-flame': isp_clinic_flame_report
 }
 
-function isp_clinic_missing_report(report_url:string, data:Struct, callback:Introspector):string {
+function isp_clinic_missing_report(_report_url:string, data:Struct, _callback:Introspector):string {
   console.log("missing"+ data);
   return "missing"
 }

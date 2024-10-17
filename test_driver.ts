@@ -4,7 +4,7 @@ import { process_statement } from "./process_statements.ts";
 import type { Introspector } from "./introspector.ts";
 
 import type { RdfObject } from "./rdf.ts";
-import { rdf_type } from "./rdf_type.ts";
+//import type { rdf_type } from "./rdf_type.ts";
 type Error=string;
 
 export function test_driver(callback:Introspector) {

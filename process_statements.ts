@@ -2,7 +2,7 @@ import type { RdfObject } from "./rdf.ts";
 import { find_function, find_pred_function,
 } from "./rdf_callbacks.ts";
 //, set_function
-import { missing } from "./missing.ts";
+//import { missing } from "./missing.ts";
 import type { Introspector,  RdfCallback,
   RdfPredCallback
  } from "./introspector.ts";

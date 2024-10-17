@@ -1,5 +1,9 @@
 
-import type { Introspector,CallbackOutput,RdfCallback,RdfPredCallback } from "./introspector.ts";
+import type { Introspector,
+  //CallbackOutput,
+  RdfCallback,
+  //RdfPredCallback
+} from "./introspector.ts";
 
 //type TypeObjectCallback = (subject:string,callback:Introspector) => string;
 export function rdf_type(type_function: RdfCallback, subj:string,callback:Introspector):void {

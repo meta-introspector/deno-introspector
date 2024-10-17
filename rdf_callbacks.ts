@@ -1,8 +1,10 @@
-import type { Functions } from "./functions.ts";
+//import type { Functions } from "./functions.ts";
 import { statement } from "./statement.ts";
 import { isp_clinic_report } from "./clinic_report.ts";
 import { isp_self } from "./introspector.ts";
-import type { Introspector,CallbackOutput,RdfCallback, RdfPredCallback } from "./introspector.ts";
+import type { Introspector,
+  //CallbackOutput,
+  RdfCallback, RdfPredCallback } from "./introspector.ts";
 import { rdf_type } from "./rdf_type.ts";
 
 export interface ObjFunctions {
